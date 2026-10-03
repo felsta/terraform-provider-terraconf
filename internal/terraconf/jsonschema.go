@@ -19,12 +19,9 @@ type SchemaError struct {
 	Pointer JsonPointer
 }
 
-// CheckWithSchema validates the given value against the JSON schema at the
-// given path and returns a list of SchemaErrors representing the errors found
-// during validation. If there is an error reading or compiling the schema, or
-// if the error returned by the jsonschema library is not a ValidationError,
-// an error is returned.
-func CheckWithSchema(value any, schemaPath string) ([]SchemaError, error) {
+// CompileSchema reads and compiles the JSON schema at the given path. The
+// compiled schema can be reused to validate multiple values.
+func CompileSchema(schemaPath string) (*jsonschema.Schema, error) {
 	path, err := filepath.Abs(schemaPath)
 	if err != nil {
 		return nil, fmt.Errorf("getting absolute path of schema: %w", err)
@@ -36,7 +33,15 @@ func CheckWithSchema(value any, schemaPath string) ([]SchemaError, error) {
 		return nil, fmt.Errorf("compiling schema: %w", err)
 	}
 
-	err = schema.Validate(value)
+	return schema, nil
+}
+
+// ValidateWithSchema validates the given value against the compiled schema
+// and returns a list of SchemaErrors representing the errors found during
+// validation. If the error returned by the jsonschema library is not a
+// ValidationError, an error is returned.
+func ValidateWithSchema(schema *jsonschema.Schema, value any) ([]SchemaError, error) {
+	err := schema.Validate(value)
 	if err == nil {
 		return nil, nil
 	}

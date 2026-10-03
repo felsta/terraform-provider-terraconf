@@ -42,6 +42,11 @@ func TestSchemaValidation(t *testing.T) {
 				t.Fatalf("No files found matching pattern: %s", scenario.YamlPattern)
 			}
 
+			schema, err := CompileSchema(scenario.SchemaFile)
+			if err != nil {
+				t.Fatalf("CompileSchema failed: %v", err)
+			}
+
 			// Process each matched file
 			for _, yamlFile := range files {
 				// Load YAML file
@@ -51,9 +56,9 @@ func TestSchemaValidation(t *testing.T) {
 				}
 
 				// Check against schema BEFORE adding annotations
-				schemaErrors, err := CheckWithSchema(yamlData, scenario.SchemaFile)
+				schemaErrors, err := ValidateWithSchema(schema, yamlData)
 				if err != nil {
-					t.Fatalf("CheckWithSchema failed: %v", err)
+					t.Fatalf("ValidateWithSchema failed: %v", err)
 				}
 
 				// Add annotations for tracing AFTER schema validation

@@ -47,6 +47,7 @@ resource "cloudflare_dns_record" "records" {
 ### Optional
 
 - `add_annotations` (Boolean) If true (default), a special _terraconf annotation is added to every object in the YAML structure, which encodes the location of that object inside the configuration. This can be used in a custom function to display a rich error message, which points to the exact location of the error in the YAML file.
+- `apply_schema_defaults` (Boolean) If true, properties that are missing in the YAML files are set to the `default` value defined for them in the JSON schema. Defaults are applied after validation, to every object in the YAML file or added by another default, but missing objects without a default are not created. References (`$ref`) and `allOf` are followed, while conditional keywords like `anyOf`, `oneOf` and `if`/`then`/`else` are ignored. Requires `schema_file` to be set. Defaults to false.
 - `auto_flatten` (Boolean) If true (default), automatically flattens lists at the root of each YAML file into the output list. If false, each YAML file's content is added as a single element.
 - `schema_file` (String) Path to a JSON schema file to validate the YAML files against. If validation fails, returns an error with the location in the YAML file.
 

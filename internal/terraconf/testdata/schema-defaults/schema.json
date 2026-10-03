@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "enabled": { "type": "boolean", "default": false },
+    "replicas": { "type": "integer", "default": 3 },
+    "ratio": { "type": "number", "default": 0.5 },
+    "tags": { "type": "array", "default": [] },
+    "network": {
+      "type": "object",
+      "default": {},
+      "properties": {
+        "mtu": { "type": "integer", "default": 1500 }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "env": { "type": "string", "default": "dev" }
+      }
+    },
+    "disks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/disk" }
+    },
+    "tuple": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "properties": { "first": { "type": "string", "default": "a" } }
+        }
+      ]
+    },
+    "tree": { "$ref": "#/$defs/node" }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "owner": { "$ref": "#/$defs/owner" }
+      }
+    }
+  ],
+  "$defs": {
+    "disk": {
+      "type": "object",
+      "properties": {
+        "size": { "type": "integer", "default": 10 }
+      }
+    },
+    "owner": { "type": "string", "default": "platform" },
+    "node": {
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "default": "leaf" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        }
+      }
+    }
+  }
+}
