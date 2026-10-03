@@ -15,6 +15,9 @@ resource "cloudflare_dns_record" "records" {
   type = "A"
   tags = ["source:generated"]
 
+  // Every object carries the path of the file it was read from
+  comment = "Generated from ${each.value._terraconf_path}"
+
   zone_id = each.value.zone_id
   name    = each.value.name
   ttl     = each.value.ttl

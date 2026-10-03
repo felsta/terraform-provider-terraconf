@@ -3,12 +3,12 @@
 page_title: "sanatize function - terraconf"
 subcategory: ""
 description: |-
-  Removes all '_terraconf' tags from an object recursively
+  Removes all '_terraconf' and '_terraconf_path' tags from an object recursively
 ---
 
 # function: sanatize
 
-When using a data source from this provider to read data, a special '_terraconf' tag is inserted into the data to track metadata about the source of the data. This function can be used to remove those tags, if you want to work with the raw data without any additional metadata. This may be useful if you need to iterate over the keys of an object, for example.
+When using a data source from this provider to read data, the special '_terraconf' and '_terraconf_path' tags are inserted into the data to track metadata about the source of the data. This function can be used to remove those tags, if you want to work with the raw data without any additional metadata. This may be useful if you need to iterate over the keys of an object, for example.
 
 ## Example Usage
 
@@ -32,10 +32,11 @@ resource "hcloud_server" "virtual_machine" {
     ipv6_enabled = true
   }
 
-  // By default, the output contains '_terraconf' keys in all
-  // objects to facilitate error reporting. sanatize() removes
-  // these annotations (in this case to avoid setting a label
-  // named '_terraconf' on our VM)
+  // By default, the output contains '_terraconf' and
+  // '_terraconf_path' keys in all objects to facilitate error
+  // reporting. sanatize() removes these annotations (in this
+  // case to avoid setting labels named '_terraconf' and
+  // '_terraconf_path' on our VM)
   labels = provider::terraconf::sanatize(each.value.labels)
 }
 ```

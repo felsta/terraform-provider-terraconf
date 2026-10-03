@@ -50,7 +50,7 @@ func (d *YamlDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Optional:            true,
 			},
 			"add_annotations": schema.BoolAttribute{
-				MarkdownDescription: "If true (default), a special _terraconf annotation is added to every object in the YAML structure, which encodes the location of that object inside the configuration. This can be used in a custom function to display a rich error message, which points to the exact location of the error in the YAML file.",
+				MarkdownDescription: "If true (default), a special _terraconf annotation is added to every object in the YAML structure, which encodes the location of that object inside the configuration. This can be used in a custom function to display a rich error message, which points to the exact location of the error in the YAML file. Additionally, a _terraconf_path annotation containing only the path of the source file is added to every object.",
 				Optional:            true,
 			},
 			"output": schema.DynamicAttribute{

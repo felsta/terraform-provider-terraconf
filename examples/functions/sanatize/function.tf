@@ -17,9 +17,10 @@ resource "hcloud_server" "virtual_machine" {
     ipv6_enabled = true
   }
 
-  // By default, the output contains '_terraconf' keys in all
-  // objects to facilitate error reporting. sanatize() removes
-  // these annotations (in this case to avoid setting a label
-  // named '_terraconf' on our VM)
+  // By default, the output contains '_terraconf' and
+  // '_terraconf_path' keys in all objects to facilitate error
+  // reporting. sanatize() removes these annotations (in this
+  // case to avoid setting labels named '_terraconf' and
+  // '_terraconf_path' on our VM)
   labels = provider::terraconf::sanatize(each.value.labels)
 }

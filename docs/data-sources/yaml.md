@@ -30,6 +30,9 @@ resource "cloudflare_dns_record" "records" {
   type = "A"
   tags = ["source:generated"]
 
+  // Every object carries the path of the file it was read from
+  comment = "Generated from ${each.value._terraconf_path}"
+
   zone_id = each.value.zone_id
   name    = each.value.name
   ttl     = each.value.ttl
@@ -46,7 +49,7 @@ resource "cloudflare_dns_record" "records" {
 
 ### Optional
 
-- `add_annotations` (Boolean) If true (default), a special _terraconf annotation is added to every object in the YAML structure, which encodes the location of that object inside the configuration. This can be used in a custom function to display a rich error message, which points to the exact location of the error in the YAML file.
+- `add_annotations` (Boolean) If true (default), a special _terraconf annotation is added to every object in the YAML structure, which encodes the location of that object inside the configuration. This can be used in a custom function to display a rich error message, which points to the exact location of the error in the YAML file. Additionally, a _terraconf_path annotation containing only the path of the source file is added to every object.
 - `auto_flatten` (Boolean) If true (default), automatically flattens lists at the root of each YAML file into the output list. If false, each YAML file's content is added as a single element.
 - `schema_file` (String) Path to a JSON schema file to validate the YAML files against. If validation fails, returns an error with the location in the YAML file.
 

@@ -40,18 +40,21 @@ func TestAccSanatizeFunction(t *testing.T) {
 const testAccSanatizeFunctionConfig = `
 locals {
   input = {
-    _terraconf = "special tag meant to be removed"
-    foo        = "Hello"
-    bar        = "World"
+    _terraconf      = "special tag meant to be removed"
+    _terraconf_path = "special tag meant to be removed"
+    foo             = "Hello"
+    bar             = "World"
 
     baz = [
 	  {
-        _terraconf = "special tag meant to be removed"
-        foobar     = "1"
+        _terraconf      = "special tag meant to be removed"
+        _terraconf_path = "special tag meant to be removed"
+        foobar          = "1"
       },
 	  {
-        _terraconf = "special tag meant to be removed"
-        foobar     = "2"
+        _terraconf      = "special tag meant to be removed"
+        _terraconf_path = "special tag meant to be removed"
+        foobar          = "2"
       }
     ]
   }

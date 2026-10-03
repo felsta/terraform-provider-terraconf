@@ -8,6 +8,16 @@ import (
 
 var terraconfV1 string = "v1"
 
+const (
+	// annotationKey is the key of the annotation encoding the version,
+	// filename and json pointer of an object.
+	annotationKey = "_terraconf"
+
+	// pathAnnotationKey is the key of the annotation containing only the
+	// filename of an object, so consumers don't need to parse annotationKey.
+	pathAnnotationKey = "_terraconf_path"
+)
+
 // Represents a decoded annotation.
 type Annotation struct {
 	Version  string
@@ -38,6 +48,7 @@ func LoadAndAnnotateYAML(path string) (any, error) {
 // object in the YAML file, starting with '/' for the root. This follows
 // RFC 6901, where keys and array indices are appended as '/key' or '/0', for
 // maps and arrays respectively. The version is currently fixed to "v1".
+// Additionally, the key "_terraconf_path" is added with just the filename.
 func AddAnnotations(value any, path string) error {
 	filename, err := MakeRelative(path)
 	if err != nil {
@@ -48,12 +59,13 @@ func AddAnnotations(value any, path string) error {
 	return nil
 }
 
-// RemoveAnnotations removes all _terraconf annotations from the given
-// structure.
+// RemoveAnnotations removes all _terraconf and _terraconf_path annotations
+// from the given structure.
 func RemoveAnnotations(value any) {
 	switch node := value.(type) {
 	case map[string]any:
-		delete(node, "_terraconf")
+		delete(node, annotationKey)
+		delete(node, pathAnnotationKey)
 
 		for _, v := range node {
 			RemoveAnnotations(v)
@@ -83,7 +95,7 @@ func FindAnnotation(value any) (Annotation, error) {
 func recurseIntoList(value any) (Annotation, error) {
 	switch value := value.(type) {
 	case map[string]any:
-		annotation, ok := value["_terraconf"]
+		annotation, ok := value[annotationKey]
 		if !ok {
 			return Annotation{}, fmt.Errorf("annotation not present in first encountered object")
 		}
@@ -142,7 +154,8 @@ func decodeAnnotation(tag string) (Annotation, error) {
 }
 
 // annotate walks the YAML-parsed structure and for every mapping inserts the
-// _terraconf key with the value "version|filename|json-pointer". Paths are
+// _terraconf key with the value "version|filename|json-pointer" and the
+// _terraconf_path key with the value "filename". Paths are
 // JSON Pointer tokens starting with '/' for root (we represent the document
 // root as '/'). Keys and array indices are appended as '/key' or '/0'.
 func annotate(node any, filename string, pointer JsonPointer) {
@@ -152,7 +165,8 @@ func annotate(node any, filename string, pointer JsonPointer) {
 			annotate(value, filename, pointer.Append(key))
 		}
 
-		node["_terraconf"] = terraconfV1 + "|" + filename + "|" + pointer.Raw()
+		node[annotationKey] = terraconfV1 + "|" + filename + "|" + pointer.Raw()
+		node[pathAnnotationKey] = filename
 	case []any:
 		for i, value := range node {
 			annotate(value, filename, pointer.Append(strconv.Itoa(i)))

@@ -24,8 +24,8 @@ func (r SanatizeFunction) Metadata(_ context.Context, req function.MetadataReque
 
 func (r SanatizeFunction) Definition(_ context.Context, _ function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:             "Removes all '_terraconf' tags from an object recursively",
-		MarkdownDescription: "When using a data source from this provider to read data, a special '_terraconf' tag is inserted into the data to track metadata about the source of the data. This function can be used to remove those tags, if you want to work with the raw data without any additional metadata. This may be useful if you need to iterate over the keys of an object, for example.",
+		Summary:             "Removes all '_terraconf' and '_terraconf_path' tags from an object recursively",
+		MarkdownDescription: "When using a data source from this provider to read data, the special '_terraconf' and '_terraconf_path' tags are inserted into the data to track metadata about the source of the data. This function can be used to remove those tags, if you want to work with the raw data without any additional metadata. This may be useful if you need to iterate over the keys of an object, for example.",
 		Parameters: []function.Parameter{
 			function.DynamicParameter{
 				Name:                "value",
