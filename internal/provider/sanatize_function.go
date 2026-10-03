@@ -47,6 +47,7 @@ func (r SanatizeFunction) Run(ctx context.Context, req function.RunRequest, resp
 	value, err := terraconf.TerraformDynamicToGoValue(ctx, rawValue)
 	if err != nil {
 		resp.Error = function.NewArgumentFuncError(0, err.Error())
+		return
 	}
 
 	terraconf.RemoveAnnotations(value)
@@ -54,6 +55,7 @@ func (r SanatizeFunction) Run(ctx context.Context, req function.RunRequest, resp
 	rawValue, err = terraconf.GoValueToTerraformDynamic(ctx, value)
 	if err != nil {
 		resp.Error = function.NewFuncError(err.Error())
+		return
 	}
 
 	resp.Error = function.ConcatFuncErrors(resp.Result.Set(ctx, rawValue))
