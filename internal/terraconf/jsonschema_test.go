@@ -98,3 +98,23 @@ func TestSchemaValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestCompareJsonPointers(t *testing.T) {
+	cases := []struct {
+		a, b     string
+		expected int
+	}{
+		{"/foo", "/foo", 0},
+		{"/foo", "/bar", 1},
+		{"/oneOf/2", "/oneOf/10", -1},
+		{"/oneOf/10/properties", "/oneOf/2/properties", 1},
+		{"/items", "/items/0", -1},
+		{"", "/foo", -1},
+	}
+
+	for _, tc := range cases {
+		if actual := compareJsonPointers(tc.a, tc.b); actual != tc.expected {
+			t.Errorf("compareJsonPointers(%q, %q) = %d, expected %d", tc.a, tc.b, actual, tc.expected)
+		}
+	}
+}
